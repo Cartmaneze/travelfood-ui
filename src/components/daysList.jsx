@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import styled from 'styled-components';
 import Day from './day';
-import RestApi from './../rest';
+import restApi from '../rest/day';
 
 const Container = styled.div`
 //	margin: 8px;
@@ -36,17 +36,12 @@ export default class DaysTable extends Component {
 		daysCounter: 0
 	}
 
-	componentDidMount() {
-		this.getAllDays()
-			.then(data => {
-				console.log(JSON.stringify(data, null, 4));
-				this.setState({
-					days: data,
-					daysCounter: data.length
-				});
-			}).catch(err => {
-				console.log(JSON.stringify(err, null, 4));
-			})
+	componentDidMount = async () => {
+		let data = await this.getAllDays()
+		this.setState({
+			days: data,
+			daysCounter: data.length
+		});
 	}
 
 	render() {
@@ -55,7 +50,7 @@ export default class DaysTable extends Component {
 				<Title> Days </Title>
 				{
 					this.state.days.map(day => {
-						return <Day key={day.id} dayId={day.id} removeDay={this.removeDay} rerender={this.rerender}/>
+						return <Day key={day.id} dayId={day.id} removeDay={this.removeDay}/>
 					})
 				}
 				<NewDayButton onClick={this.addNewDay}>new day</NewDayButton>
@@ -63,40 +58,32 @@ export default class DaysTable extends Component {
 		)
 	}
 
-	async getAllDays() {
-		let rest = new RestApi();
-		let res = await rest.getAllDays();
+	getAllDays = async () => {
+		let res = await restApi.getAllDays();
 		return res.data;
 	}
 
-	addNewDay = () => {
+	addNewDay = async () => {
 		let newState = this.state;
 		let days = this.state.days;
-		let rest = new RestApi();
-		rest.createDay()
-			.then(data => {
-				console.log(JSON.stringify(data, null, 4));
-			}).catch(err => {
-				console.log(err);
-			})
+		let res = await restApi.createDay();
 		let newDay = {
-			id: this.state.daysCounter
+			id: res.data.id,
+			name: res.data.number,
+			journey_id: res.data.journey_id
 		}
 		days.push(newDay);
 		newState.days = days;
-		newState.daysCounter = this.state.daysCounter + 1;
+		newState.daysCounter = days.length;
 		this.setState(newState);
 	}
 
-	removeDay = (id) => {
-		let newState = this.state;
-		let days = this.state.days;
-		days = days.filter(day => {
-			if (day.id !== id) {
-				return day;
-			}
-		})
-		newState.days = days;
-		this.setState(newState);
+	removeDay = async (id) => {
+		await restApi.removeDay(id);
+		let data = await this.getAllDays();
+		this.setState({
+			days: data,
+			daysCounter: data.length
+		});
 	}
 }

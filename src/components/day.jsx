@@ -48,7 +48,6 @@ export default class Day extends Component {
 	}
 
 	removeDay = (id) => {
-		console.log(id);
 		this.props.removeDay(id);
 	}
 }
