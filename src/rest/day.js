@@ -3,33 +3,36 @@ import configs from './configs';
 
 class DayApi {
 	async getAllDays() {
-		const response = await axios.get(
+		return axios.get(
 			configs.url + '/day',
 			{},
-			{ headers: configs.headers }
+			{ 
+				headers: configs.headers, 
+			}
 		)
-		return response;
 	}
 
 	async createDay() {
-		const response = await axios.post(
+		return axios.post(
 			configs.url + '/day',
 			{
 				"number": "1",
 				"journey_id": 1
 			},
-			{ headers: configs.headers }
+			{ 
+				headers: configs.headers
+			}
 		)
-		return response;
 	}
 
 	async removeDay(id) {
-		const response = await axios.delete(
+		return axios.delete(
 			configs.url + `/day/${id}`,
 			{},
-			{ headers: configs.headers }
+			{ 
+				headers: configs.headers, 
+			}
 		)
-		return response;
 	}
 }
 
