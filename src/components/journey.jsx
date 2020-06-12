@@ -5,24 +5,24 @@ const Container = styled.div`
 	display: flex;
 `;
 
-const DayButton = styled.button`
+const JourneyButton = styled.button`
     outline: none !important;
     outline-offset: none !important;
-	background-color: #4CAF50;
+	background-color: #8C1FA6;
 	padding: 40px 40px;
 	border-radius: 50%;
 	border: 1px solid lightgrey;
 	margin: 5px 5px;
 	&:hover {
 		color: white;
-    	background-color: darkgreen;
+    	background-color: #541066;
   	}
 `;
 
-const DayButtonClicked = styled.button`
+const JourneyButtonClicked = styled.button`
     outline: none !important;
     outline-offset: none !important;
-	background-color: darkgreen;
+	background-color: #541066;
 	padding: 40px 40px;
 	border-radius: 50%;
 	border: 1px solid lightgrey;
@@ -56,7 +56,7 @@ const HidenRemoveButton = styled.div`
   	}
 `;
 
-export default class Day extends Component {
+export default class Journey extends Component {
 	constructor() {
 		super();
 
@@ -65,20 +65,8 @@ export default class Day extends Component {
 		}
     }
 
-    componentDidMount = async () => {
-        if (this.props.lastClickedDayId !== this.props.dayId) {
-            this.setState({
-                clicked: false
-            });
-        } else {
-            this.setState({
-                clicked: true
-            });
-        }
-    }
-    
-    componentWillReceiveProps = async (nextProps) => {
-        if (nextProps.lastClickedDayId !== this.props.dayId) {
+    componentWillReceiveProps = async () => {
+        if (this.props.lastClickedJourneyId !== this.props.journeyId) {
             this.setState({
                 clicked: false
             });
@@ -92,20 +80,20 @@ export default class Day extends Component {
 	render() {
 		return (
 			<Container>
-                {this.state.clicked && this.props.daysListSize > 1 ? <RemoveButton onClick={this.removeDay.bind(this, this.props.dayId)}/> : <HidenRemoveButton /> }
-                {this.state.clicked ? <DayButtonClicked /> : <DayButton onClick={this.clickDay.bind(this)} />}
+                {this.state.clicked && this.props.journeysListSize > 1 ? <RemoveButton onClick={this.removeJourney.bind(this, this.props.journeyId)}/> : <HidenRemoveButton />}
+				{this.state.clicked ? <JourneyButtonClicked /> : <JourneyButton onClick={this.clickJourney.bind(this)} />}
 			</Container>
 		)
     }
     
-    clickDay() {
+    clickJourney() {
         this.setState({
             clicked: true
         })
-        this.props.setLastClickedDay(this.props.dayId);
+        this.props.setLastClickedJourney(this.props.journeyId);
     }
 
-	removeDay = (id) => {
-		this.props.removeDay(id);
+	removeJourney = (id) => {
+		this.props.removeJourney(id);
 	}
 }

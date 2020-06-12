@@ -1,32 +1,76 @@
 import React, { Component } from 'react';
 import 'bootstrap/dist/css/bootstrap.css';
 import styled from 'styled-components';
+import JourneyList from './journeyList';
 import DaysList from './daysList';
-import MainTable from './mainTable';
-import restApi from './../rest/login';
+import DndTables from './dndTables';
+import Login from './login';
+import Header from './header';
+import Footer from './footer';
+import Cookies from 'universal-cookie';
+
+const cookies = new Cookies();
 
 const Container = styled.div`
+`;
+
+const ContainerFlex = styled.div`
 	display: flex;
 `;
 
 class App extends Component {
-	state = {
-
+    state = {
+        authenticated: false,
+        lastClickedJourneyId: null,
+        lastClickedDayId: null
     }
 
-	componentDidMount = async () => {
-		let res = await restApi.login();
-		let cookieValue = document.cookie;
-		console.log(JSON.stringify(res.headers, null, 4));
-		console.log(JSON.stringify(res, null, 4));
-	}
+    authorize() {
+        this.setState({
+            authenticated: true
+        });
+    }
 
-	render() {
+    isAuthenticated() {
+        return cookies.get('travelfood');
+    }
+
+    setLastClickedJourney(lastClickedJourneyId) {
+        this.setState({
+            lastClickedJourneyId: lastClickedJourneyId
+        });
+    }
+
+    setLastClickedDay(lastClickedDayId) {
+        this.setState({
+            lastClickedDayId: lastClickedDayId
+        });
+    }
+
+    clearState() {
+        this.setState({
+            authenticated: false,
+            lastClickedJourneyId: null,
+            lastClickedDayId: null
+        });
+    }
+    
+    render() {
 		return (
-			<Container>
-				<DaysList />
-				<MainTable />
-			</Container>
+            this.isAuthenticated() ?
+            <Container>
+                <Header clearState={this.clearState.bind(this)} />
+                <ContainerFlex>
+                    <JourneyList setLastClickedJourney={this.setLastClickedJourney.bind(this)} lastClickedJourneyId={this.state.lastClickedJourneyId} />
+				    <DaysList setLastClickedDay={this.setLastClickedDay.bind(this)} lastClickedDayId={this.state.lastClickedDayId} lastClickedJourneyId={this.state.lastClickedJourneyId} />
+                    <DndTables lastClickedDayId={this.state.lastClickedDayId} />
+			    </ContainerFlex>
+                <Footer />
+            </Container>
+            :
+			<ContainerFlex>
+                <Login authorize={this.authorize.bind(this)} />
+			</ContainerFlex>
 		)	
 	}
 }

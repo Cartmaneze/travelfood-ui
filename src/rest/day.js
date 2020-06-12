@@ -2,22 +2,24 @@ import axios from 'axios';
 import configs from './configs';
 
 class DayApi {
-	async getAllDays() {
+	async getAllDays(journeyId) {
+        console.log('rest getAllDays - journeyId:' + journeyId);
 		return axios.get(
-			configs.url + '/day',
+			configs.url + `/day?journeyId=${journeyId}`,
 			{},
 			{ 
 				headers: configs.headers, 
 			}
-		)
+        )
 	}
 
-	async createDay() {
+	async createDay(journeyId) {
+        console.log('rest createDay - journeyId:' + journeyId);
 		return axios.post(
 			configs.url + '/day',
 			{
 				"number": "1",
-				"journey_id": 1
+				"journey_id": journeyId
 			},
 			{ 
 				headers: configs.headers
@@ -26,6 +28,7 @@ class DayApi {
 	}
 
 	async removeDay(id) {
+        console.log('rest removeDay - id:' + id);
 		return axios.delete(
 			configs.url + `/day/${id}`,
 			{},

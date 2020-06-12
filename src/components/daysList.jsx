@@ -18,31 +18,37 @@ const Title = styled.h2`
 `;
 
 const NewDayButton = styled.button`
+    outline: none !important;
+    outline-offset: none !important;
 	background-color: green;
 	padding: 16px 16px;
 	border-radius: 20%;
 	border: 1px solid lightgrey;
 	float: right;
-	margin-left: 28%;
+	margin-left: 25%;
 	&:hover {
 		color: white;
     	background-color: darkgreen;
   	}
 `;
 
-export default class DaysTable extends Component {
+export default class DaysList extends Component {
+
 	state = {
-		days: [],
-		daysCounter: 0
+        days: []
 	}
 
-	componentDidMount = async () => {
-		let data = await this.getAllDays()
-		this.setState({
-			days: data,
-			daysCounter: data.length
-		});
-	}
+    componentWillReceiveProps = async (nextProps) => {
+        if (this.props.lastClickedJourneyId !== nextProps.lastClickedJourneyId) {
+            let data = await this.getAllDays(nextProps.lastClickedJourneyId);
+            if (data.length > 0) {
+                this.props.setLastClickedDay(data[0].id);
+            }
+            this.setState({
+                days: data
+            });
+        }
+    }
 
 	render() {
 		return (
@@ -50,7 +56,8 @@ export default class DaysTable extends Component {
 				<Title> Days </Title>
 				{
 					this.state.days.map(day => {
-						return <Day key={day.id} dayId={day.id} removeDay={this.removeDay}/>
+                        return <Day key={day.id} dayId={day.id} removeDay={this.removeDay} daysListSize={this.state.days.length}
+                        setLastClickedDay={this.setLastClickedDay.bind(this)} lastClickedDayId={this.props.lastClickedDayId}/>
 					})
 				}
 				<NewDayButton onClick={this.addNewDay}>new day</NewDayButton>
@@ -58,32 +65,32 @@ export default class DaysTable extends Component {
 		)
 	}
 
-	getAllDays = async () => {
-		let res = await restApi.getAllDays();
+	getAllDays = async (lastClickedJourneyId) => {
+		let res = await restApi.getAllDays(lastClickedJourneyId);
 		return res.data;
-	}
+    }
+    
+    setLastClickedDay(id) {
+        this.props.setLastClickedDay(id);
+    }
 
 	addNewDay = async () => {
-		let newState = this.state;
-		let days = this.state.days;
-		let res = await restApi.createDay();
-		let newDay = {
-			id: res.data.id,
-			name: res.data.number,
-			journey_id: res.data.journey_id
-		}
-		days.push(newDay);
-		newState.days = days;
-		newState.daysCounter = days.length;
-		this.setState(newState);
+        let days = this.state.days;
+		let res = await restApi.createDay(this.props.lastClickedJourneyId);
+        days.push(res.data);
+		this.setState({
+			days: days
+        });
 	}
 
 	removeDay = async (id) => {
 		await restApi.removeDay(id);
-		let data = await this.getAllDays();
+        let data = await this.getAllDays(this.props.lastClickedJourneyId);
+        if (data.length > 0) {
+            this.props.setLastClickedDay(data[0].id);
+        }
 		this.setState({
-			days: data,
-			daysCounter: data.length
-		});
+			days: data
+        });
 	}
 }
