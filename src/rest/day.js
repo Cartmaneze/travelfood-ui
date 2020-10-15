@@ -27,6 +27,19 @@ class DayApi {
 		)
 	}
 
+    async updateDay(id, order) {
+        console.log(`rest updateDay - id: ${id}, order: ${order}`);
+		return axios.put(
+			configs.url + `/day/${id}`,
+			{
+				"order": order
+			},
+			{ 
+				headers: configs.headers
+			}
+		)
+	}
+
 	async removeDay(id) {
         console.log('rest removeDay - id:' + id);
 		return axios.delete(

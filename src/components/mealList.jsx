@@ -46,7 +46,7 @@ const TaskList = styled.div`
 `;
 
 export default class MealList extends Component {
-    
+
 	render() {
 		return (
 			<Table>

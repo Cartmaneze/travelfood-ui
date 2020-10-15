@@ -13,17 +13,29 @@ class MealApi {
         )
     }
     
-    async createMeal(dayId, foodId, weight = 100) {
-        console.log('rest createMeal - dayId:' + dayId + ' foodId:' + foodId + ' wight:' + weight);
+    async createMeal(dayId, foodId, weight = 100, index) {
+        console.log(`rest createMeal - dayId: ${dayId} foodId: ${foodId} wight: ${weight} index: ${index}`);
 		return axios.post(
 			configs.url + '/meal',
 			{
 				"day_id": dayId,
                 "food_id": foodId,
-                "weight": weight
+                "weight": weight,
+                "index": index
 			},
 			{
 				headers: configs.headers
+			}
+		)
+    }
+
+    async removeMeal(id) {
+        console.log(`rest removeMeal - id: ${id}`);
+		return axios.delete(
+			configs.url + `/meal/${id}`,
+			{},
+			{ 
+				headers: configs.headers, 
 			}
 		)
     }

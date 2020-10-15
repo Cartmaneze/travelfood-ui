@@ -42,6 +42,7 @@ const Handle = styled.div`
 
 const Tr = styled.tr`
     width: 200px;
+    height: 32px;
 `;
 
 const Td = styled.td`
@@ -61,6 +62,7 @@ export default class Meal extends Component {
 
     render() {
 		return (
+            //this.props.meal.food.name === 'emptyFood' ?
             <Draggable 
             draggableId={this.props.meal.id.toString()} 
 			index={this.props.index}
